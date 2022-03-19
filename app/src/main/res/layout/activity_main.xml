@@ -19,6 +19,8 @@
             android:id="@+id/et_search"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:text="@={viewModel.searchString}"
+            android:textColor="@color/white"
             android:hint="Search image"
             android:backgroundTint="@color/white"
             android:textColorHint="@android:color/darker_gray"
