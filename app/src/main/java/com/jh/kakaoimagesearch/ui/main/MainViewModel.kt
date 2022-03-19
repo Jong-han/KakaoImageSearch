@@ -8,8 +8,6 @@ import javax.inject.Inject
 @HiltViewModel
 class MainViewModel @Inject constructor(private val searchUseCase: SearchUseCase): ViewModel() {
 
-    init {
-        searchUseCase.getSearchResult("apple")
-    }
+    fun getSearchResult() = searchUseCase.getSearchResult("apple")
 
 }
