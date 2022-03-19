@@ -24,9 +24,11 @@ class MainViewModel @Inject constructor(private val searchUseCase: SearchUseCase
     val pagingData: StateFlow<PagingData<Document>> = _pagingData
 
     fun getSearchResult(searchString: String) {
-        viewModelScope.launch(ioDispatcher) {
-            searchUseCase.getSearchResult(searchString).collectLatest {
-                _pagingData.value = it
+        if (searchString.isNotEmpty()) {
+            viewModelScope.launch(ioDispatcher) {
+                searchUseCase.getSearchResult(searchString).collectLatest {
+                    _pagingData.value = it
+                }
             }
         }
     }

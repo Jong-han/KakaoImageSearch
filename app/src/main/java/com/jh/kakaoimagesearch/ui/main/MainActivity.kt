@@ -1,8 +1,9 @@
 package com.jh.kakaoimagesearch.ui.main
 
-import android.widget.Toast
+import android.view.View
 import androidx.activity.viewModels
 import androidx.lifecycle.lifecycleScope
+import androidx.paging.PagingData
 import com.jh.kakaoimagesearch.BR
 import com.jh.kakaoimagesearch.R
 import com.jh.kakaoimagesearch.base.BaseActivity
@@ -11,7 +12,6 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.debounce
-import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
@@ -28,15 +28,17 @@ class MainActivity : BaseActivity<ActivityMainBinding, MainViewModel>() {
     @OptIn(FlowPreview::class)
     override fun initViewAndEvent() {
 
-        dataBinding.rvImage.adapter = mainAdapter
+        dataBinding.rvImage.adapter = mainAdapter.also { adapter ->
+            adapter.addLoadStateListener {
+                emptyViewControl(mainAdapter.itemCount)
+            }
+        }
+
 
         lifecycleScope.launch {
             viewModel.searchString.debounce(2000)
-                .filter {
-                    it.isNotEmpty()
-                }.collect {
-                    Toast.makeText(this@MainActivity, "검색을 시작합니다.", Toast.LENGTH_SHORT).show()
-                    mainAdapter.refresh()
+                .collect {
+                    mainAdapter.submitData(PagingData.empty())
                     viewModel.getSearchResult(it)
                 }
         }
@@ -46,6 +48,16 @@ class MainActivity : BaseActivity<ActivityMainBinding, MainViewModel>() {
                 mainAdapter.submitData(it)
             }
         }
-
     }
+
+    private fun emptyViewControl(itemCount: Int) {
+        if (itemCount < 1) {
+            dataBinding.tvEmpty.visibility = View.VISIBLE
+            dataBinding.rvImage.visibility = View.INVISIBLE
+        } else {
+            dataBinding.tvEmpty.visibility = View.INVISIBLE
+            dataBinding.rvImage.visibility = View.VISIBLE
+        }
+    }
+
 }

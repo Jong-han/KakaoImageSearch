@@ -7,6 +7,7 @@
         <variable
             name="viewModel"
             type="com.jh.kakaoimagesearch.ui.main.MainViewModel" />
+        <import type="android.view.View"/>
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -41,6 +42,22 @@
             app:layout_constraintVertical_bias="0.0"
             app:spanCount="3"
             tools:listitem="@layout/activity_main_item" />
+
+        <TextView
+            android:id="@+id/tv_empty"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:gravity="center"
+            android:text="텅~"
+            android:maxLines="1"
+            android:textColor="@color/white"
+            android:autoSizeTextType="uniform"
+            android:autoSizeMaxTextSize="200dp"
+            android:background="@color/black"
+            app:layout_constraintTop_toTopOf="@id/rv_image"
+            app:layout_constraintStart_toStartOf="@id/rv_image"
+            app:layout_constraintEnd_toEndOf="@id/rv_image"
+            app:layout_constraintBottom_toBottomOf="@id/rv_image"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
