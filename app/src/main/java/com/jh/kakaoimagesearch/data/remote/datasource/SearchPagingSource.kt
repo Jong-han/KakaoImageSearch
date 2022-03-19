@@ -3,6 +3,8 @@ package com.jh.kakaoimagesearch.data.remote.datasource
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import com.jh.kakaoimagesearch.data.remote.response.Document
+import retrofit2.HttpException
+import java.io.IOException
 
 class SearchPagingSource(private val searchDataSource: SearchDataSource, private val searchString: String) : PagingSource<Int, Document>() {
 
@@ -13,7 +15,7 @@ class SearchPagingSource(private val searchDataSource: SearchDataSource, private
     }
 
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, Document> {
-        return kotlin.runCatching {
+        return try {
             val page = params.key ?: 1
             val size = if (params.loadSize >= 80) 80 else params.loadSize
             val apiCall = searchDataSource.getSearchResult(searchString, size, page)
@@ -23,9 +25,11 @@ class SearchPagingSource(private val searchDataSource: SearchDataSource, private
                 prevKey = if (page == 1) null else page - 1,
                 nextKey = if (apiCall.meta.is_end) null else page + 1
             )
-        }.onFailure {
-            return LoadResult.Error(it)
-        }.getOrThrow()
+        } catch (e: IOException) {
+            LoadResult.Error(e)
+        } catch (e: HttpException) {
+            LoadResult.Error(e)
+        }
     }
 
 }

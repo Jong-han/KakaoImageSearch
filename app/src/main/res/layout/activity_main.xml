@@ -36,10 +36,8 @@
             app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/et_search"
-            app:layout_constraintVertical_bias="0.0"
             app:spanCount="3"
             tools:listitem="@layout/activity_main_item" />
 
@@ -47,8 +45,9 @@
             android:id="@+id/tv_empty"
             android:layout_width="0dp"
             android:layout_height="0dp"
+            android:padding="15dp"
             android:gravity="center"
-            android:text="텅~"
+            android:text="검색 결과가 없습니다."
             android:maxLines="1"
             android:textColor="@color/white"
             android:autoSizeTextType="uniform"
@@ -58,6 +57,30 @@
             app:layout_constraintStart_toStartOf="@id/rv_image"
             app:layout_constraintEnd_toEndOf="@id/rv_image"
             app:layout_constraintBottom_toBottomOf="@id/rv_image"/>
+
+        <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+            android:id="@+id/swipe_view"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_constraintTop_toTopOf="@id/rv_image"
+            app:layout_constraintStart_toStartOf="@id/rv_image"
+            app:layout_constraintEnd_toEndOf="@id/rv_image"
+            app:layout_constraintBottom_toBottomOf="@id/rv_image" >
+
+            <TextView
+                android:id="@+id/tv_error"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:padding="15dp"
+                android:gravity="center"
+                android:text="에러가 발생했습니다.\n당겨서 재시도 해주세요!!"
+                android:maxLines="2"
+                android:textColor="@color/white"
+                android:autoSizeTextType="uniform"
+                android:autoSizeMaxTextSize="200dp"
+                android:background="@color/black"/>
+
+        </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
