@@ -1,6 +1,7 @@
 package com.jh.kakaoimagesearch.ui.main
 
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
@@ -8,10 +9,10 @@ import com.jh.kakaoimagesearch.base.BaseViewHolder
 import com.jh.kakaoimagesearch.data.remote.response.Document
 import com.jh.kakaoimagesearch.databinding.ActivityMainItemBinding
 
-class MainAdapter: PagingDataAdapter<Document, BaseViewHolder>(MainDiffUtil()){
+class MainAdapter(private val onClickItem: (View, Any)->Unit): PagingDataAdapter<Document, BaseViewHolder>(MainDiffUtil()){
 
     override fun onBindViewHolder(holder: BaseViewHolder, position: Int) {
-        getItem(position)?.let { holder.onBind(it) }
+        getItem(position)?.let { holder.onBind(it, onClickItem) }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BaseViewHolder {
@@ -24,9 +25,12 @@ class MainAdapter: PagingDataAdapter<Document, BaseViewHolder>(MainDiffUtil()){
 
 class MainViewHolder(private val binding: ActivityMainItemBinding): BaseViewHolder(binding) {
 
-    override fun onBind(item: Any) {
+    override fun onBind(item: Any, itemClickListener: (View, Any)->Unit) {
         if (item is Document) {
             binding.document = item
+            binding.ivImage.setOnClickListener {
+                itemClickListener.invoke(it, item)
+            }
         }
     }
 

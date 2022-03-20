@@ -1,14 +1,19 @@
 package com.jh.kakaoimagesearch.ui.main
 
+import android.content.Intent
 import android.view.View
 import androidx.activity.viewModels
+import androidx.core.app.ActivityOptionsCompat
+import androidx.core.util.toAndroidXPair
 import androidx.lifecycle.lifecycleScope
 import androidx.paging.LoadState
 import androidx.paging.PagingData
 import com.jh.kakaoimagesearch.BR
 import com.jh.kakaoimagesearch.R
 import com.jh.kakaoimagesearch.base.BaseActivity
+import com.jh.kakaoimagesearch.data.remote.response.Document
 import com.jh.kakaoimagesearch.databinding.ActivityMainBinding
+import com.jh.kakaoimagesearch.ui.detail.DetailActivity
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.collect
@@ -18,13 +23,17 @@ import kotlinx.coroutines.launch
 @AndroidEntryPoint
 class MainActivity : BaseActivity<ActivityMainBinding, MainViewModel>() {
 
+    companion object {
+        const val EXTRA_DOCUMENT = "EXTRA_DOCUMENT"
+    }
+
     override val viewModel: MainViewModel by viewModels()
 
     override val bindingVariable: Int = BR.viewModel
 
     override fun getLayoutId(): Int = R.layout.activity_main
 
-    private val mainAdapter by lazy { MainAdapter() }
+    private val mainAdapter by lazy { MainAdapter(onClickItem) }
 
     @OptIn(FlowPreview::class)
     override fun initViewAndEvent() {
@@ -72,6 +81,19 @@ class MainActivity : BaseActivity<ActivityMainBinding, MainViewModel>() {
         } else {
             dataBinding.tvEmpty.visibility = View.INVISIBLE
             dataBinding.rvImage.visibility = View.VISIBLE
+        }
+    }
+
+    private val onClickItem: (View, Any)->Unit = { v: View, item: Any ->
+
+        val pair: Pair<View, String> = Pair(v, v.transitionName)
+
+        val optionsCompat =
+            ActivityOptionsCompat.makeSceneTransitionAnimation(this@MainActivity, pair.toAndroidXPair())
+
+        Intent(this, DetailActivity::class.java).apply {
+            putExtra(EXTRA_DOCUMENT, item as Document)
+            startActivity(this, optionsCompat.toBundle())
         }
     }
 
