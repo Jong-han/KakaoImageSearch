@@ -5,7 +5,6 @@ import android.view.View
 import androidx.activity.viewModels
 import androidx.core.app.ActivityOptionsCompat
 import androidx.core.util.toAndroidXPair
-import androidx.lifecycle.lifecycleScope
 import androidx.paging.LoadState
 import androidx.paging.PagingData
 import com.jh.kakaoimagesearch.BR
@@ -13,12 +12,13 @@ import com.jh.kakaoimagesearch.R
 import com.jh.kakaoimagesearch.base.BaseActivity
 import com.jh.kakaoimagesearch.data.remote.response.Document
 import com.jh.kakaoimagesearch.databinding.ActivityMainBinding
+import com.jh.kakaoimagesearch.ext.hideKeyboard
+import com.jh.kakaoimagesearch.ext.repeatOnStarted
 import com.jh.kakaoimagesearch.ui.detail.DetailActivity
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.debounce
-import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class MainActivity : BaseActivity<ActivityMainBinding, MainViewModel>() {
@@ -55,7 +55,7 @@ class MainActivity : BaseActivity<ActivityMainBinding, MainViewModel>() {
             }
         }
 
-        lifecycleScope.launch {
+        repeatOnStarted {
             viewModel.searchString.debounce(2000)
                 .collect {
                     if (it.isNotEmpty()) {
@@ -64,10 +64,12 @@ class MainActivity : BaseActivity<ActivityMainBinding, MainViewModel>() {
                     } else {
                         mainAdapter.submitData(PagingData.empty())
                     }
+                    hideKeyboard()
+                    dataBinding.etSearch.clearFocus()
                 }
         }
 
-        lifecycleScope.launch {
+        repeatOnStarted {
             viewModel.pagingData.collect {
                 mainAdapter.submitData(it)
             }
